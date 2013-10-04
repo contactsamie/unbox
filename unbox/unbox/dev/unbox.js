@@ -63,7 +63,7 @@
 
         logger(f);
 
-        var methdBuilder = "function(" + dependency.toString() + "){\n\n " + w.iinject.module.mgmt.getDeclareList(obj.me).code + "\n\n  return (" + f.toString() + ")(); \n\n  }";
+        var methdBuilder = "function(" + dependency.toString() + "){\n\n " + w.unbox.module.mgmt.getDeclareList(obj.me).code + "\n\n  return (" + f.toString() + ")(); \n\n  }";
         logger("executing ...");
         logger(methdBuilder);
         eval("var fInject=" + methdBuilder);
@@ -73,7 +73,7 @@
     var controllerFactory = function (obj, methodRef) {
         var execute = function (f) {
             var executionResult = undefined;
-            var iDependsOn = methodRef && (w.iinject.module.mgmt.getDependency(obj.me, methodRef))["dependencyList"];//  w.iinject.module.all[obj.me]["dependencies"];
+            var iDependsOn = methodRef && (w.unbox.module.mgmt.getDependency(obj.me, methodRef))["dependencyList"];//  w.unbox.module.all[obj.me]["dependencies"];
 
             utility.basicInputValidation(f);
             var dependsOn = {};
@@ -96,7 +96,7 @@
                 }
                 logger("with..");
                 logger(dependsOn);
-                var root = w.iinject.module.mgmt.getRoot(obj.me);
+                var root = w.unbox.module.mgmt.getRoot(obj.me);
                 logger("at root space ...");
                 logger(root);
                 root.current(fInject);
@@ -124,9 +124,9 @@
                 rArguments.push(arguments[i].toString());
             }
             logger(rArguments);
-            // w.iinject.module.all[name]["dependencies"] = rArguments;
+            // w.unbox.module.all[name]["dependencies"] = rArguments;
 
-            methodRef = w.iinject.module.mgmt.setDependency(name, rArguments);
+            methodRef = w.unbox.module.mgmt.setDependency(name, rArguments);
 
             return controllerFactory(that, methodRef);
         };
@@ -137,7 +137,7 @@
         d = controllerFactory(d);
         d.me = name;
         d.declare = function (item) {
-            w.iinject.module.mgmt.pushDeclare(name, item);
+            w.unbox.module.mgmt.pushDeclare(name, item);
             this.declare.variables = item;
             return this;
         }
@@ -159,34 +159,34 @@
         logger(modules.dependencies);
         return this;
     };
-    w.iinject = function (name) {
+    w.unbox = function (name) {
         if (typeof name === "string") {
             logger(name + " module finding");
-            if (w.iinject.module.all[name]) {
+            if (w.unbox.module.all[name]) {
                 logger(name + " module found");
-                return w.iinject.module.all[name]["build"];
+                return w.unbox.module.all[name]["build"];
             } else {
                 logger(name + " module does not exist");
                 logger("creating " + name + " module ......");
-                return w.iinject.module(name);
+                return w.unbox.module(name);
             }
         } else {
             throw new iiException("module reference error");
         }
     };
-    w.iinject.module = function (name) {
-        w.iinject.module.all = w.iinject.module.all || {};
+    w.unbox.module = function (name) {
+        w.unbox.module.all = w.unbox.module.all || {};
 
         if (typeof name === "string") {
             name = utility.trim(name);
-            if (w.iinject.module.all[name]) {
+            if (w.unbox.module.all[name]) {
                 throw new iiException(name + " module already exist");
             } else {
                 utility.basicInputValidation(name);
                 name = utility.trim(name);
                 var build = ModuleFactory(name);
 
-                w.iinject.module.all[name] = {
+                w.unbox.module.all[name] = {
                     build: build, dependencies: {}, root: {
                         space: {
                             current: function (f) {
@@ -197,27 +197,27 @@
                         }, declare: {}
                     }
                 };
-                logger(w.iinject.module.all[name]["build"]);
+                logger(w.unbox.module.all[name]["build"]);
                 return build;
             }
         }
     };
-    w.iinject.module.all = {};
-    w.iinject.module.mgmt = {
+    w.unbox.module.all = {};
+    w.unbox.module.mgmt = {
         methodCounter: function () {
-            w.iinject.module.mgmt.methodCounter.i = w.iinject.module.mgmt.methodCounter.i || 0;
-            w.iinject.module.mgmt.methodCounter.i++;
-            return "methodId" + w.iinject.module.mgmt.methodCounter.i;
+            w.unbox.module.mgmt.methodCounter.i = w.unbox.module.mgmt.methodCounter.i || 0;
+            w.unbox.module.mgmt.methodCounter.i++;
+            return "methodId" + w.unbox.module.mgmt.methodCounter.i;
         },
         getDependency: function (moduleName, methodRef) {
-            w.iinject.module.all[moduleName]["dependencies"] = w.iinject.module.all[moduleName]["dependencies"] || {};
-            return w.iinject.module.all[moduleName]["dependencies"][methodRef];
+            w.unbox.module.all[moduleName]["dependencies"] = w.unbox.module.all[moduleName]["dependencies"] || {};
+            return w.unbox.module.all[moduleName]["dependencies"][methodRef];
         },
         setDependency: function (moduleName, methodNames) {
             var result = false;
-            if (w.iinject.module.all[moduleName] && w.iinject.module.all[moduleName]["dependencies"]) {
+            if (w.unbox.module.all[moduleName] && w.unbox.module.all[moduleName]["dependencies"]) {
                 var mathodRef = this.methodCounter();
-                w.iinject.module.all[moduleName]["dependencies"][mathodRef] = {
+                w.unbox.module.all[moduleName]["dependencies"][mathodRef] = {
                     refName: mathodRef,
                     dependencyList: methodNames,
                     dependencyStore: {}
@@ -226,7 +226,7 @@
                 for (var i = 0; i < methodNames.length; i++) {
                     var methodName = methodNames[i];
                     if (methodName) {
-                        w.iinject.module.all[moduleName]["dependencies"][mathodRef]["dependencyStore"][methodName] = function () { };
+                        w.unbox.module.all[moduleName]["dependencies"][mathodRef]["dependencyStore"][methodName] = function () { };
                     }
                 }
 
@@ -236,12 +236,12 @@
         },
         pushDeclare: function (moduleName, rootItem) {
             if (rootItem) {
-                w.iinject.module.all[moduleName]["root"]["declare"] = rootItem;
+                w.unbox.module.all[moduleName]["root"]["declare"] = rootItem;
             }
-            return w.iinject.module.all[moduleName]["root"]["declare"];
+            return w.unbox.module.all[moduleName]["root"]["declare"];
         },
         getDeclareList: function (moduleName) {
-            var obj = w.iinject.module.all[moduleName]["root"]["declare"];
+            var obj = w.unbox.module.all[moduleName]["root"]["declare"];
             var declStr = {
                 code: "",
                 parameters: "window"
@@ -249,14 +249,14 @@
 
             for (var item in obj) {
                 if (obj.hasOwnProperty(item)) {
-                    declStr.code += "\nvar " + item + "=" + "window.iinject('" + moduleName + "').declare.variables." + item + ";";
+                    declStr.code += "\nvar " + item + "=" + "window.unbox('" + moduleName + "').declare.variables." + item + ";";
                     declStr.parameters += "," + item + "\n\n";
                 }
             }
             return declStr;
         },
         getRoot: function (moduleName) {
-            return w.iinject.module.all[moduleName]["root"]["space"];
+            return w.unbox.module.all[moduleName]["root"]["space"];
         },
         getBuild: function (moduleName) { },
         setBuild: function (moduleName, build) { }
