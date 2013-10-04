@@ -94,11 +94,12 @@ th {
 
 
 header {
-  width:278px;
+  width:488px;
   float:left;
   position:fixed;
-    top: -65px;
+    top: -260px;
     left: 60px;
+    height: 428px;
 }
 
 header ul {
@@ -160,7 +161,7 @@ header ul a strong {
 }
 
 section {
-  width:499px;
+  width:623px;
   float:right;
   padding-bottom:50px;
 }
