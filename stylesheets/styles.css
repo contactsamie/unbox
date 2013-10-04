@@ -46,7 +46,7 @@ a small {
 }
 
 .wrapper {
-  width:1037px;
+  width:787px;
   margin:0 auto;
 }
 
@@ -94,9 +94,11 @@ th {
 
 
 header {
-  width:270px;
+  width:278px;
   float:left;
   position:fixed;
+    top: -65px;
+    left: 60px;
 }
 
 header ul {
